@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+
+    <style>
+        body {
+            margin: 0%;
+            padding: 0%;
+        }
+        
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id='map'></div>
+</body>
+
+</html>
+
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+<script src="C:\Users\charl\Desktop\4th year Honours\GIT713\Botanical garden project\Leaflet\Leaflet\Leaflet\polgon.js"></script>
+<script src="C:\Users\charl\Desktop\4th year Honours\GIT713\Botanical garden project\Leaflet\Leaflet\Leaflet\Beds.js"></script>
+<script src="C:\Users\charl\Desktop\4th year Honours\GIT713\Botanical garden project\Leaflet\Leaflet\Leaflet\all_buildings.js"></script>
+
+
+
+<script>
+    //Map initialisation
+    var map = L.map('map').setView([-33.9362, 18.8648], 18);
+
+    //Basemap 
+
+    //OSM layer
+    var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    });
+    osm.addTo(map);
+
+
+    //tile provider
+    //https://leaflet-extras.github.io/leaflet-providers/preview/
+
+    //https://gis.stackexchange.com/questions/225098/using-google-maps-static-tiles-with-leaflet
+    googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 25,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+    });
+
+    googleStreets.addTo(map);
+
+
+    //geojason
+    //https://geojson.io/#map=17.36/-33.936086/18.864912    #D3D3D3
+
+    //symbology for beds
+
+    L.geoJSON(PolygonJson, {
+        style: function(feature) {
+            return {
+                fillColor: '#D3D3D3',
+                fillOpacity: 1,
+                stroke: false
+            };
+        }
+    }).addTo(map);
+
+    // L.geoJSON(Buildings).addTo(map)
+
+    // L.geoJSON(Beds, {
+    //   onEachFeature: function (feature, layer) {
+    //     layer.bindPopup('<b>Bed name: </b>' + feature.properties.Display_name);
+    //   },
+    //   style: function (feature) {
+    //     var bedName = feature.properties.Display_name;
+
+    //     for (var j = 0; j < bedsym.length; j++) {
+    //       var name = bedsym[j].name;
+
+    //       if (bedName === name) {
+    //         return {
+    //           fillColor: bedsym[j].color,
+    //           fillOpacity: 1,
+    //           stroke: false
+    //         };
+    //       }
+    //     }
+
+    //     return {
+    //       fillColor: '#000000',
+    //       fillOpacity: 1,
+    //       stroke: false
+    //     };
+    //   }
+    // }).addTo(map);    
+
+    //layercontroller
+
+    var baseLayers = {
+        'OSM': osm,
+        'Google Street': googleStreets
+    };
+
+// Tyring the pop feature with just hovering over the objects
+   
+    var overlays = {
+    //   'buildings_test': L.geoJSON(Buildings,{
+    //     featureLayer.on('mouseover', function())
+    //   }),
+    
+
+
+
+    // --------------------------------------------------------------------------------------------------------------------------------
+    'buildings' : L.geoJSON(Buildings, {
+          onEachFeature : function (feature, layer) {
+            var popupContent = feature.properties.buildingType;
+            // layer.bindPopup(popupContent);
+            layer.bindPopup('<img src = image.png />');
+
+            layer.on('mouseover', function(e){
+              this.openPopup(e.latlng);
+            });
+            layer.on('mouseout', function (e) {
+              this.closePopup();
+            });
+        },
+        }),
+// --------------------------------------------------------------------------------------------------------------------------------
+        // 'buildings' : L.geoJSON(Buildings, {
+        //   onEachFeature : function (feature, layer) {
+        //   layer.bindPopup('<b>Building name: </b> ' + feature.properties.buildingType);
+        // },
+        // }),
+        'Plant Beds': L.geoJSON(Beds, {
+            onEachFeature: function(feature, layer) {
+              var popupContent = feature.properties.Display_name
+                layer.bindPopup('<b>Bed name: </b>' + popupContent );
+                layer.on('mouseover', function(e){
+              this.openPopup(e.latlng);
+            });
+            layer.on('mouseout', function (e) {
+              this.closePopup();
+            });
+            },
+            style: function(feature) {
+                var bedName = feature.properties.Display_name;
+
+                // for (var j = 0; j < bedsym.length; j++) {
+                //   var name = bedsym[j].name;
+
+                //   if (bedName === name) {
+                //     return {
+                //       fillColor: bedsym[j].color,
+                //       fillOpacity: 1,
+                //       stroke: false
+                //     };
+                //   }
+                // }
+
+                return {
+                    fillColor: '#000000',
+                    fillOpacity: 1,
+                    stroke: false
+                };
+            }
+        })
+    };
+
+    L.control.layers(baseLayers, overlays).addTo(map);
+</script>
+
+<!--hover over the features with a mouse then it should pop up  -->
+<!-- //what i would like to look at for leaflet  -->
+<!-- //adding an image pop u -->
+<!-- //adding the building shapefile
+/bedSymbology.geojson
+ /bedSymbology.geojson -->
