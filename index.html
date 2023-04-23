@@ -37,6 +37,9 @@ to provide a password when they want to run the map -->
 <script src=".\polgon.js"></script>
 <script src=".\Beds.js"></script>
 <script src=".\all_buildings.js"></script>
+<script src=".\Tree_points.js"></script>
+<script src=".\Tree_points_2.js"></script>
+<script src=".\Tree_points_3.js"></script>
 
 
 
@@ -122,16 +125,38 @@ to provide a password when they want to run the map -->
     //   'buildings_test': L.geoJSON(Buildings,{
     //     featureLayer.on('mouseover', function())
     //   }),
-    
+// --------------------------------------------------------------------------------------------------------------------------------    
+    'Tree_points_3' : L.geoJSON(Tree_points_3, {
+    onEachFeature : function (feature, layer) {
+    var popupContent = feature.properties.accessionItem;
 
+    layer.on('mouseover', function(e){
+              this.openPopup(e.latlng);
+            });
+            layer.on('mouseout', function (e) {
+              this.closePopup();
+            });
+    },
+}),
+// --------------------------------------------------------------------------------------------------------------------------------
+'Tree_points' : L.geoJSON(Tree_points, {
+    onEachFeature : function (feature, layer) {
+    var popupContent = feature.properties.accessionItem;
 
-
-    // --------------------------------------------------------------------------------------------------------------------------------
+    layer.on('mouseover', function(e){
+              this.openPopup(e.latlng);
+            });
+            layer.on('mouseout', function (e) {
+              this.closePopup();
+            });
+    },
+}),
+// --------------------------------------------------------------------------------------------------------------------------------
     'buildings' : L.geoJSON(Buildings, {
           onEachFeature : function (feature, layer) {
             var popupContent = feature.properties.buildingType;
             // layer.bindPopup(popupContent);
-            layer.bindPopup('<img src = image.png />');
+            // layer.bindPopup('<img src = image.png />');
 
             layer.on('mouseover', function(e){
               this.openPopup(e.latlng);
